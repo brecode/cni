@@ -142,23 +142,23 @@ func setupHostVeth(vethName string, ipConf *types.IPConfig) error {
 
 	// Create vpp-host interface 
 	var cmdOut []byte
-	cmdName := "vppctl"
-	cmdArgs := []string{"create", "host-interface", "name", interfaceName}
+	cmdName = "vppctl"
+	cmdArgs = []string{"create", "host-interface", "name", vethName}
 	if cmdOut, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
 		return err
 	}
 	if cmdOut != nil {
-		err = errors.New(cmdOut)	
+		err = errors.New(string(cmdOut))	
 		return err
 	}
 
 	// Set vpp-host interface state up
-	cmdArgs = []string{"set", "int", "state", "host-" + interfaceName, "up"}
+	cmdArgs = []string{"set", "int", "state", "host-" + vethName, "up"}
 	if cmdOut, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
 		return err
 	}
 	if cmdOut != nil {
-		err = errors.New(cmdOut)	
+		err = errors.New(string(cmdOut))
 		return err
 	}	
 
@@ -167,15 +167,15 @@ func setupHostVeth(vethName string, ipConf *types.IPConfig) error {
 		IP:   ipConf.Gateway,
 		Mask: net.CIDRMask(32, 32),
 	}
-	cmdArgs = []string{"set", "int", "ip", "address", "host-" + ipn.IP , ipn.Mask}
+	cmdArgs = []string{"set", "int", "ip", "address", "host-" + vethName, ipn.IP , ipn.Mask}
 	if cmdOut, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
 		return err
 	}
 	if cmdOut != nil {
-		err = errors.New(cmdOut)	
+		err = errors.New(string(cmdOut))
 		return err
 	}
-	
+
 	return nil
 }
 
